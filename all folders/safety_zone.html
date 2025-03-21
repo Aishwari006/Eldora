@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Friendly Safety Zone App</title>
+  <title>Friendly Safety Zone App - Sorted Polygon</title>
   <!-- Tailwind CSS (CDN) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
@@ -59,7 +59,7 @@
       1) Click <em>“Start Setting Geofence”</em>.<br/>
       2) Tap the map to drop <span class="font-bold">green markers</span>.<br/>
       3) Once you have <span class="font-bold">4 or more</span> points, click <em>“Finish Geofence”</em>.<br/>
-      4) If you leave the safe zone, an <span class="font-bold text-red-600">Emergency SOS alert</span> is triggered, and emergency contacts are notified!
+      4) The status will immediately show if you are <span class="font-bold">in</span> or <span class="font-bold">out</span> of the zone, and turn <span class="text-green-600">green</span> or <span class="text-red-600">red</span> accordingly.
     </p>
     <button
       id="startGeofenceBtn"
@@ -139,7 +139,7 @@
   <script>
     let map, userMarker;
     let safeZonePolygon = null;      // Leaflet polygon layer
-    let safeZoneHull = null;         // Turf.js polygon geometry (for inside checks)
+    let safeZoneGeoJSON = null;      // Turf.js polygon geometry
     let isSettingGeofence = false;   // Are we currently adding points?
     const boundaryPoints = [];       // [ [lng, lat], ... ]
     const boundaryMarkers = [];      // references to green markers
@@ -204,29 +204,32 @@
         map.removeLayer(safeZonePolygon);
         safeZonePolygon = null;
       }
-      safeZoneHull = null;
+      safeZoneGeoJSON = null;
 
-      // Build a Turf.js feature collection from boundaryPoints
-      const pointFeatures = boundaryPoints.map(coords => turf.point(coords));
-      const fc = turf.featureCollection(pointFeatures);
+      // 1) Find the centroid of all clicked points
+      const fc = turf.featureCollection(
+        boundaryPoints.map((coords) => turf.point(coords))
+      );
+      const centroid = turf.centroid(fc).geometry.coordinates; // [lng, lat]
 
-      // Create a convex hull polygon from those points
-      const hull = turf.convex(fc);
+      // 2) Sort boundaryPoints by angle around centroid
+      const sortedPoints = boundaryPoints.slice().sort((a, b) => {
+        const angleA = Math.atan2(a[1] - centroid[1], a[0] - centroid[0]);
+        const angleB = Math.atan2(b[1] - centroid[1], b[0] - centroid[0]);
+        return angleA - angleB;
+      });
 
-      if (!hull) {
-        alert("Could not form a polygon. Make sure you have at least 4 points.");
-        return;
-      }
+      // 3) Create a closed polygon ring
+      const ring = [...sortedPoints, sortedPoints[0]];
 
-      // Save hull geometry for later "inside polygon" checks
-      safeZoneHull = hull; // We'll use this in watchPosition
+      // 4) Build a Turf.js polygon
+      safeZoneGeoJSON = turf.polygon([ring]);
 
-      // Convert hull's coordinates to Leaflet [lat, lng] format
-      // hull.geometry.coordinates is [ [ [lng, lat], [lng, lat], ... ] ]
-      const hullCoords = hull.geometry.coordinates[0].map(([lng, lat]) => [lat, lng]);
+      // 5) Convert to Leaflet coords [lat, lng] for drawing
+      const latlngs = ring.map(([lng, lat]) => [lat, lng]);
 
-      // Draw the polygon in Leaflet
-      safeZonePolygon = L.polygon(hullCoords, {
+      // 6) Draw polygon on the map
+      safeZonePolygon = L.polygon(latlngs, {
         color: 'red',
         fillColor: 'red',
         fillOpacity: 0.2
@@ -236,6 +239,28 @@
       isSettingGeofence = false;
       document.getElementById('startGeofenceBtn').disabled = false;
       document.getElementById('finishGeofenceBtn').disabled = true;
+
+      // ✅ Immediately check if user is in or out
+      immediateStatusCheck();
+    }
+
+    // Immediately checks user location vs. safeZone
+    function immediateStatusCheck() {
+      if (!userMarker || !safeZoneGeoJSON) return;
+
+      const { lat, lng } = userMarker.getLatLng();
+      const pt = turf.point([lng, lat]);
+      const inside = turf.booleanPointInPolygon(pt, safeZoneGeoJSON);
+      const statusEl = document.getElementById("status");
+
+      if (inside) {
+        statusEl.textContent = "In Safe-Zone";
+        statusEl.style.color = "green";
+      } else {
+        statusEl.textContent = "Out of Safe-Zone";
+        statusEl.style.color = "red";
+        triggerEmergencySOS();
+      }
     }
 
     function clearGeofence() {
@@ -244,7 +269,7 @@
         map.removeLayer(safeZonePolygon);
         safeZonePolygon = null;
       }
-      safeZoneHull = null;
+      safeZoneGeoJSON = null;
 
       // Remove green markers
       boundaryMarkers.forEach(m => map.removeLayer(m));
@@ -259,6 +284,11 @@
       document.getElementById('finishGeofenceBtn').disabled = true;
       document.getElementById('clearGeofenceBtn').disabled = true;
       window.emergencyTriggered = false;
+
+      // Show "Loading status..." or something neutral
+      const statusEl = document.getElementById("status");
+      statusEl.textContent = "Loading status...";
+      statusEl.style.color = "black";
     }
 
     function watchUserPosition() {
@@ -267,21 +297,18 @@
           (pos) => {
             const lat = pos.coords.latitude;
             const lng = pos.coords.longitude;
-            const currentLatLng = [lat, lng];
 
             // Update user marker
             if (userMarker) {
-              userMarker.setLatLng(currentLatLng);
+              userMarker.setLatLng([lat, lng]);
             } else {
-              userMarker = L.marker(currentLatLng).addTo(map);
+              userMarker = L.marker([lat, lng]).addTo(map);
             }
 
-            // If we have a hull, check if inside
-            if (safeZoneHull) {
-              // Convert user's location to a Turf point
+            // If we have a polygon, check if inside
+            if (safeZoneGeoJSON) {
               const pt = turf.point([lng, lat]);
-              // Check if inside the polygon
-              const inside = turf.booleanPointInPolygon(pt, safeZoneHull);
+              const inside = turf.booleanPointInPolygon(pt, safeZoneGeoJSON);
 
               const statusEl = document.getElementById("status");
               if (inside) {
