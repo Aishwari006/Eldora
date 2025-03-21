@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Immediate Fall Alert</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-purple-300 to-purple-900">
+
+  <!-- Live Monitoring Indicator (Green Header) -->
+  <header class="flex items-center justify-between bg-green-500 text-white p-4 sticky top-0">
+    <div class="flex items-center space-x-2">
+      <!-- Pulsating Circle -->
+      <div class="w-3 h-3 bg-white rounded-full animate-pulse"></div>
+      <span class="font-bold">Monitoring Active</span>
+    </div>
+    <span class="text-sm">All systems nominal</span>
+  </header>
+
+  <!-- Immediate Fall Alert Section (White Box) -->
+  <section class="container mx-auto p-8 mt-8 bg-neutral-200 shadow-lg rounded-lg ">
+    <h1 class="text-4xl font-bold mb-6 ">Immediate Fall Alert</h1>
+    <div class="flex ">
+      <button
+        id="triggerAlert"
+        class="px-8 py-4 bg-red-500 text-white text-xl rounded-lg hover:bg-red-600 transition"
+      >
+        Fall Detection
+      </button>
+    </div>
+  </section>
+
+  <!-- Fall History Section (White Box) -->
+  <section class="container mx-auto p-10 m-20 bg-neutral-200 shadow-lg rounded-lg">
+    <h2 class="text-4xl font-bold mb-7 ">Fall History</h2>
+    <p class="text-gray-700 mb-4">Below is a record of detected falls.</p>
+
+    <!-- Removed any border by using border-0 -->
+    <ul id="fallHistory" class="border-0">
+      <li class="py-2 text-gray-600">No recorded falls yet.</li>
+    </ul>
+
+    <!-- Clear History Button -->
+    <button
+      id="clearHistory"
+      class="mt-4 px-6 py-3 bg-gray-400 text-white rounded-lg hover:bg-gray-500 shadow-2xl transition "
+    >
+      Clear History
+    </button>
+  </section>
+
+  <!-- Optional Audio for Alert Sound -->
+  <audio id="alertSound">
+    <source src="alert.mp3" type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Alert Modal -->
+  <div
+    id="alertModal"
+    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden"
+  >
+    <div class="bg-white rounded-lg shadow-lg p-8 w-80">
+      <h2 class="text-xl font-bold mb-2 text-red-600">Fall Detected!</h2>
+      <p class="mb-4">Are you okay?</p>
+      <!-- Countdown Timer -->
+      <div class="text-center mb-4">
+        <span id="countdown" class="text-4xl font-bold">10</span>
+        <span class="text-lg"> seconds</span>
+      </div>
+      <!-- Action Buttons -->
+      <div class="flex space-x-4">
+        <button
+          id="cancelAlert"
+          class="flex-1 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition"
+        >
+          I'm Okay
+        </button>
+        <button
+          id="panicButton"
+          class="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+        >
+          Hurry Up!
+        </button>
+      </div>
+    </div>
+  </div>
+     <footer class="w-full p-4 bg-white shadow-lg flex justify-around fixed bottom-0">
+    <a href="#" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">🏠</a>
+    <a href="#" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">👤</a>
+    <a href="#" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">⚙️</a>
+  </footer>
+
+  <!-- JavaScript for Modal, Countdown, and Fall History -->
+  <script>
+    const triggerAlertButton = document.getElementById('triggerAlert');
+    const alertModal = document.getElementById('alertModal');
+    const countdownElement = document.getElementById('countdown');
+    const cancelAlertButton = document.getElementById('cancelAlert');
+    const panicButton = document.getElementById('panicButton');
+    const alertSound = document.getElementById('alertSound');
+    const fallHistoryList = document.getElementById('fallHistory');
+    const clearHistoryButton = document.getElementById('clearHistory');
+
+    let countdownValue = 10;
+    let countdownInterval;
+
+    // Start countdown from 10 down to 0
+    function startCountdown() {
+      countdownValue = 10;
+      countdownElement.textContent = countdownValue;
+      countdownInterval = setInterval(() => {
+        countdownValue--;
+        countdownElement.textContent = countdownValue;
+        if (countdownValue <= 0) {
+          clearInterval(countdownInterval);
+          recordFall();
+          alert("Emergency action triggered!");
+          closeModal();
+        }
+      }, 1000);
+    }
+
+    // Open the modal
+    function openModal() {
+      alertModal.classList.remove('hidden');
+      alertSound.play();
+      startCountdown();
+    }
+
+    // Close the modal
+    function closeModal() {
+      alertModal.classList.add('hidden');
+      clearInterval(countdownInterval);
+      countdownValue = 10;
+      countdownElement.textContent = countdownValue;
+    }
+
+    // Record a fall event in localStorage
+    function recordFall() {
+      const fallHistory = JSON.parse(localStorage.getItem("fallHistory")) || [];
+      const timestamp = new Date().toLocaleString();
+      fallHistory.push(`Fall detected at ${timestamp}`);
+      localStorage.setItem("fallHistory", JSON.stringify(fallHistory));
+      updateFallHistory();
+    }
+
+    // Update the fall history list in the UI
+    function updateFallHistory() {
+      const fallHistory = JSON.parse(localStorage.getItem("fallHistory")) || [];
+      fallHistoryList.innerHTML = fallHistory.length > 0
+        ? fallHistory.map(fall => `<li class="py-2">${fall}</li>`).join("")
+        : "<li class='py-2 text-gray-600'>No recorded falls yet.</li>";
+    }
+
+    // Clear the fall history
+    function clearHistory() {
+      localStorage.removeItem("fallHistory");
+      updateFallHistory();
+    }
+
+    // Event listeners
+    triggerAlertButton.addEventListener('click', openModal);
+
+    cancelAlertButton.addEventListener('click', () => {
+      closeModal();
+      alert("Alert canceled. False alarm.");
+    });
+
+    panicButton.addEventListener('click', () => {
+      clearInterval(countdownInterval);
+      recordFall();
+      alert("Panic action triggered! Notifying emergency contacts.");
+      closeModal();
+    });
+
+    clearHistoryButton.addEventListener("click", clearHistory);
+
+    // Load any existing history on page load
+    document.addEventListener("DOMContentLoaded", updateFallHistory);
+  </script>
+
+</body>
+</html>

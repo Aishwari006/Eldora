@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Emergency SOS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-red-500 to-red-900 min-h-screen flex flex-col items-center justify-center">
+  <!-- Header -->
+  <header class="w-full text-white p-4 flex items-center justify-center">
+    <h1 class="text-3xl font-bold">Emergency SOS</h1>
+  </header>
+  
+  <!-- Main Content -->
+  <main class="bg-white shadow-xl rounded-lg p-8 w-11/12 max-w-md text-center">
+    <h2 class="text-2xl font-bold text-red-600 mb-4">Help is on the way!</h2>
+    <p class="text-gray-800 mb-6">
+      We have alerted your emergency contacts. Please remain calm and wait for assistance.
+      If you need to cancel the alert, press the button below.
+    </p>
+    <!-- Countdown Timer -->
+    <div class="mb-6">
+      <span id="countdown" class="text-5xl font-bold text-red-600">10</span>
+      <p class="text-lg">seconds until auto-cancellation</p>
+    </div>
+    <!-- Cancel Button -->
+    <button id="cancelSOS" class="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition">
+      Cancel SOS
+    </button>
+  </main>
+  <footer class="w-full p-4 bg-white shadow-lg flex justify-around fixed bottom-0">
+    <a href="#" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">🏠</a>
+    <a href="#" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">👤</a>
+    <a href="#" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">⚙️</a>
+  </footer>
+  
+  <!-- JavaScript for Countdown and Cancel -->
+  <script>
+    let countdownValue = 10;
+    const countdownEl = document.getElementById("countdown");
+    const cancelButton = document.getElementById("cancelSOS");
+    
+    let countdownInterval = setInterval(() => {
+      countdownValue--;
+      countdownEl.textContent = countdownValue;
+      if (countdownValue <= 0) {
+        clearInterval(countdownInterval);
+        // Auto-cancel logic: Redirect to your main page or perform another action
+        window.location.href = "index.html";
+      }
+    }, 1000);
+    
+    cancelButton.addEventListener("click", () => {
+      clearInterval(countdownInterval);
+      // Cancel logic: Redirect to your main page or perform another action
+      window.location.href = "index.html";
+    });
+  </script>
+   
+</body>
+</html>
