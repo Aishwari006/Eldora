@@ -19,8 +19,9 @@
       align-items: center;
       z-index: 50;
     }
-    /* Popup box remains white */
+    /* Popup box */
     .popup {
+      /* Default background; will be overwritten based on mood */
       background: rgb(204, 128, 128);
       color: black;
       padding: 2rem;
@@ -148,10 +149,23 @@
       ]
     };
 
+    // Define color mapping for each mood
+    const moodColors = {
+      happy: "#FFEB3B",   // Sunshine Yellow
+      smile: "#87CEEB",   // Sky Blue
+      neutral: "#98FF98", // Mint Green
+      sad: "#E6E6FA",     // Soft Lavender
+      cry: "#FFDAB9"      // Warm Peach
+    };
+
     function showPopup(mood) {
       const messageList = messages[mood];
       const randomMessage = messageList[Math.floor(Math.random() * messageList.length)];
       document.getElementById("popup-text").innerText = randomMessage;
+      
+      // Set the popup background color based on the selected mood
+      document.querySelector(".popup").style.backgroundColor = moodColors[mood] || "#fff";
+
       document.getElementById("overlay").style.display = "flex";
     }
 
