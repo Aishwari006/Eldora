@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eldora - Profile Page</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Additional custom styles */
+    .switch-link {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      padding: 8px 16px;
+      border-radius: 9999px;
+      transition: background 0.3s;
+    }
+    .switch-link:hover {
+      background: linear-gradient(90deg, #5a67d8, #6b46c1);
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+  <!-- Header with Switch Profile Link -->
+  <header class="bg-indigo-600 text-white py-6 flex justify-center items-center relative">
+    <h1 class="text-4xl font-bold">Eldora</h1>
+    <a href="#" id="switch-profile" class="switch-link absolute right-4 top-1/2 transform -translate-y-1/2 text-white font-semibold">
+      Switch Profile
+    </a>
+  </header>
+
+  <!-- Form Container -->
+  <div id="form-container" class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 my-8">
+    <form id="profile-form" class="space-y-8">
+      
+      <!-- Patient Details -->
+      <section id="patient-details">
+        <h2 class="text-2xl font-semibold text-indigo-600 border-b pb-2 mb-4">Patient Details</h2>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex flex-col">
+            <label for="patient-name" class="text-gray-700 font-medium">Name:</label>
+            <input type="text" id="patient-name" name="patientName" placeholder="Enter patient name" required class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+          <div class="flex flex-col">
+            <label for="patient-gender" class="text-gray-700 font-medium">Gender:</label>
+            <select id="patient-gender" name="patientGender" class="mt-1 border border-gray-300 rounded-md p-2">
+              <option value="">Select gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="flex flex-col">
+            <label for="patient-email" class="text-gray-700 font-medium">Email:</label>
+            <input type="email" id="patient-email" name="patientEmail" placeholder="Enter email" class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+          <div class="flex flex-col">
+            <label for="patient-mobile" class="text-gray-700 font-medium">Mobile Number:</label>
+            <input type="tel" id="patient-mobile" name="patientMobile" placeholder="Enter mobile number" 
+              value="+91" maxlength="13"
+              pattern="^\+91\d{10}$" 
+              title="Enter mobile number in format +91XXXXXXXXXX (10 digits after +91)" 
+              class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+          <div class="flex flex-col">
+            <label for="patient-dob" class="text-gray-700 font-medium">Date of Birth:</label>
+            <input type="date" id="patient-dob" name="patientDOB" class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Caregiver Details -->
+      <section id="caregiver-details">
+        <h2 class="text-2xl font-semibold text-indigo-600 border-b pb-2 mb-4">Caregiver Details</h2>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex flex-col">
+            <label for="caregiver-name" class="text-gray-700 font-medium">Name:</label>
+            <input type="text" id="caregiver-name" name="caregiverName" placeholder="Enter caregiver name" class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+          <div class="flex flex-col">
+            <label for="caregiver-email" class="text-gray-700 font-medium">Email:</label>
+            <input type="email" id="caregiver-email" name="caregiverEmail" placeholder="Enter caregiver email" class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+          <div class="flex flex-col">
+            <label for="caregiver-mobile" class="text-gray-700 font-medium">Mobile Number:</label>
+            <input type="tel" id="caregiver-mobile" name="caregiverMobile" placeholder="Enter mobile number" 
+              value="+91" maxlength="13"
+              pattern="^\+91\d{10}$" 
+              title="Enter mobile number in format +91XXXXXXXXXX (10 digits after +91)" 
+              class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Health & Medical Information -->
+      <section id="health-medical-info">
+        <h2 class="text-2xl font-semibold text-indigo-600 border-b pb-2 mb-4">Health & Medical Information</h2>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex flex-col">
+            <label for="medical-conditions" class="text-gray-700 font-medium">Medical Conditions:</label>
+            <textarea id="medical-conditions" name="medicalConditions" rows="3" placeholder="List any medical conditions" class="mt-1 border border-gray-300 rounded-md p-2"></textarea>
+          </div>
+          <div class="flex flex-col">
+            <label for="current-medications" class="text-gray-700 font-medium">Current Medications:</label>
+            <input type="text" id="current-medications" name="currentMedications" placeholder="Data from medication_reminders page" readonly class="mt-1 border border-gray-300 rounded-md p-2 bg-gray-100" />
+          </div>
+          <div class="flex flex-col">
+            <label for="allergies" class="text-gray-700 font-medium">Allergies:</label>
+            <textarea id="allergies" name="allergies" rows="2" placeholder="List allergies" class="mt-1 border border-gray-300 rounded-md p-2"></textarea>
+          </div>
+          <div class="flex flex-col">
+            <label for="blood-group" class="text-gray-700 font-medium">Blood Group:</label>
+            <select id="blood-group" name="bloodGroup" class="mt-1 border border-gray-300 rounded-md p-2">
+              <option value="">Select blood group</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+            </select>
+          </div>
+          <div class="flex flex-col">
+            <label for="doctor-contact" class="text-gray-700 font-medium">Doctor's Contact Number:</label>
+            <input type="tel" id="doctor-contact" name="doctorContact" placeholder="Enter doctor's contact" class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Emergency Information -->
+      <section id="emergency-info">
+        <h2 class="text-2xl font-semibold text-indigo-600 border-b pb-2 mb-4">Emergency Information</h2>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex flex-col">
+            <label for="physical-address" class="text-gray-700 font-medium">Physical Address:</label>
+            <textarea id="physical-address" name="physicalAddress" rows="2" placeholder="Enter physical address" class="mt-1 border border-gray-300 rounded-md p-2"></textarea>
+          </div>
+          <div class="flex flex-col">
+            <label for="emergency-contact-name" class="text-gray-700 font-medium">Emergency Contact Name &amp; Relationship:</label>
+            <input type="text" id="emergency-contact-name" name="emergencyContactName" placeholder="e.g., John Doe - Son" class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+          <div class="flex flex-col">
+            <label for="emergency-contact-phone" class="text-gray-700 font-medium">Emergency Contact Phone Number:</label>
+            <input type="tel" id="emergency-contact-phone" name="emergencyContactPhone" placeholder="Enter contact phone" class="mt-1 border border-gray-300 rounded-md p-2" />
+          </div>
+        </div>
+        <div id="additional-contacts" class="mt-4 space-y-4">
+          <h3 class="text-xl font-medium text-gray-800">Additional Emergency Contacts</h3>
+          <!-- Additional contacts will be appended here -->
+        </div>
+        <button type="button" id="add-contact-btn" class="mt-4 bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 focus:outline-none">
+          Add Additional Emergency Contact
+        </button>
+      </section>
+
+      <!-- Submit Button -->
+      <div class="text-center">
+        <button type="submit" class="mt-6 bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700 focus:outline-none">
+          Save Profile
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Profile Summary (hidden by default) -->
+  <div id="profile-summary" class="max-w-4xl mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 shadow-xl rounded-lg p-10 my-8 hidden">
+    <h2 class="text-2xl font-bold text-indigo-700 border-b pb-2 mb-6">Profile Summary</h2>
+    <div id="summary-content" class="space-y-4 text-gray-800 text-lg leading-relaxed"></div>
+    <div class="flex justify-between mt-8">
+      <button id="edit-profile-btn" class="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 focus:outline-none">
+        Edit Profile
+      </button>
+      <a href="#" id="switch-profile-summary" class="switch-link text-white font-semibold">
+        Switch Profile
+      </a>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Function to gather form data and build the summary
+    function buildSummary() {
+      const form = document.getElementById('profile-form');
+      const formData = new FormData(form);
+      const summary = {};
+
+      // Patient Details
+      summary.patientName = formData.get('patientName');
+      summary.patientGender = formData.get('patientGender');
+      summary.patientEmail = formData.get('patientEmail');
+      summary.patientMobile = formData.get('patientMobile');
+      summary.patientDOB = formData.get('patientDOB');
+
+      // Caregiver Details
+      summary.caregiverName = formData.get('caregiverName');
+      summary.caregiverEmail = formData.get('caregiverEmail');
+      summary.caregiverMobile = formData.get('caregiverMobile');
+
+      // Health & Medical Information
+      summary.medicalConditions = formData.get('medicalConditions');
+      summary.currentMedications = formData.get('currentMedications');
+      summary.allergies = formData.get('allergies');
+      summary.bloodGroup = formData.get('bloodGroup');
+      summary.doctorContact = formData.get('doctorContact');
+
+      // Emergency Information
+      summary.physicalAddress = formData.get('physicalAddress');
+      summary.emergencyContactName = formData.get('emergencyContactName');
+      summary.emergencyContactPhone = formData.get('emergencyContactPhone');
+
+      // Additional Emergency Contacts (array)
+      summary.additionalEmergencyContacts = [];
+      const additionalNames = formData.getAll('additionalEmergencyContactName[]');
+      const additionalPhones = formData.getAll('additionalEmergencyContactPhone[]');
+      for(let i = 0; i < additionalNames.length; i++){
+        summary.additionalEmergencyContacts.push({
+          name: additionalNames[i],
+          phone: additionalPhones[i]
+        });
+      }
+      return summary;
+    }
+
+    // Function to render the summary
+    function renderSummary(data) {
+      const container = document.getElementById('summary-content');
+      container.innerHTML = `
+        <p><strong>Patient Name:</strong> ${data.patientName || '-'}</p>
+        <p><strong>Gender:</strong> ${data.patientGender || '-'}</p>
+        <p><strong>Patient Email:</strong> ${data.patientEmail || '-'}</p>
+        <p><strong>Patient Mobile:</strong> ${data.patientMobile || '-'}</p>
+        <p><strong>Date of Birth:</strong> ${data.patientDOB || '-'}</p>
+        <hr class="my-2 border-gray-300" />
+        <p><strong>Caregiver Name:</strong> ${data.caregiverName || '-'}</p>
+        <p><strong>Caregiver Email:</strong> ${data.caregiverEmail || '-'}</p>
+        <p><strong>Caregiver Mobile:</strong> ${data.caregiverMobile || '-'}</p>
+        <hr class="my-2 border-gray-300" />
+        <p><strong>Medical Conditions:</strong> ${data.medicalConditions || '-'}</p>
+        <p><strong>Current Medications:</strong> ${data.currentMedications || '-'}</p>
+        <p><strong>Allergies:</strong> ${data.allergies || '-'}</p>
+        <p><strong>Blood Group:</strong> ${data.bloodGroup || '-'}</p>
+        <p><strong>Doctor's Contact:</strong> ${data.doctorContact || '-'}</p>
+        <hr class="my-2 border-gray-300" />
+        <p><strong>Physical Address:</strong> ${data.physicalAddress || '-'}</p>
+        <p><strong>Emergency Contact:</strong> ${data.emergencyContactName || '-'} (${data.emergencyContactPhone || '-'})</p>
+      `;
+
+      // Additional Emergency Contacts
+      if(data.additionalEmergencyContacts.length > 0) {
+        let additionalHTML = `<p class="mt-4"><strong>Additional Emergency Contacts:</strong></p>`;
+        data.additionalEmergencyContacts.forEach((contact, index) => {
+          additionalHTML += `<p>${index+1}. ${contact.name} - ${contact.phone}</p>`;
+        });
+        container.innerHTML += additionalHTML;
+      }
+    }
+
+    // Handle form submission
+    document.getElementById('profile-form').addEventListener('submit', function(e) {
+      e.preventDefault(); // prevent form submission reload
+      const summaryData = buildSummary();
+      renderSummary(summaryData);
+      // Hide form container and show summary container
+      document.getElementById('form-container').classList.add('hidden');
+      document.getElementById('profile-summary').classList.remove('hidden');
+    });
+
+    // Edit Profile: show the form again
+    document.getElementById('edit-profile-btn').addEventListener('click', function() {
+      document.getElementById('profile-summary').classList.add('hidden');
+      document.getElementById('form-container').classList.remove('hidden');
+    });
+
+    // "Switch Profile" links (placeholder functionality)
+    document.getElementById('switch-profile').addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('Switch Profile clicked! (Add your functionality here)');
+    });
+    document.getElementById('switch-profile-summary').addEventListener('click', function(e) {
+      e.preventDefault();
+      alert('Switch Profile clicked! (Add your functionality here)');
+    });
+    
+    // Dynamic additional emergency contacts
+    document.getElementById('add-contact-btn').addEventListener('click', function() {
+      const container = document.getElementById('additional-contacts');
+      
+      // Create a new div for an emergency contact
+      const contactDiv = document.createElement('div');
+      contactDiv.className = "p-4 border border-gray-200 rounded-md bg-gray-50";
+      
+      // Label and input for Contact Name & Relationship
+      const labelName = document.createElement('label');
+      labelName.textContent = "Emergency Contact Name & Relationship:";
+      labelName.className = "block text-gray-700 font-medium";
+      contactDiv.appendChild(labelName);
+      
+      const inputName = document.createElement('input');
+      inputName.type = "text";
+      inputName.name = "additionalEmergencyContactName[]";
+      inputName.placeholder = "e.g., Jane Doe - Daughter";
+      inputName.className = "mt-1 border border-gray-300 rounded-md p-2 w-full";
+      contactDiv.appendChild(inputName);
+      
+      // Label and input for Contact Phone Number
+      const labelPhone = document.createElement('label');
+      labelPhone.textContent = "Emergency Contact Phone Number:";
+      labelPhone.className = "block text-gray-700 font-medium mt-3";
+      contactDiv.appendChild(labelPhone);
+      
+      const inputPhone = document.createElement('input');
+      inputPhone.type = "tel";
+      inputPhone.name = "additionalEmergencyContactPhone[]";
+      inputPhone.placeholder = "Enter contact phone";
+      inputPhone.className = "mt-1 border border-gray-300 rounded-md p-2 w-full";
+      contactDiv.appendChild(inputPhone);
+      
+      container.appendChild(contactDiv);
+    });
+  </script>
+</body>
+</html>
