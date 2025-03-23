@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eldora - Medicine Reminder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      font-family: 'Inter', sans-serif;
+    }
+    nav {
+      background-image: linear-gradient(to right, #1e3c72, #2a5298);
+    }
+    .nav-btn {
+      background-color: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.5);
+      transition: background-color 0.2s;
+    }
+    .nav-btn.active {
+      background-color: rgba(255,255,255,0.3);
+    }
+    .nav-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    .btn-primary {
+      background-color: #4a90e2;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #3a78c2;
+    }
+    .card {
+      background: #f7f7f7;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="time"],
+    input[type="file"] {
+      background-color: #f7f7f7;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+    }
+    .log-entry {
+      padding: 0.75rem;
+      background: white;
+      border-left: 4px solid;
+      margin-bottom: 0.5rem;
+      border-radius: 0.25rem;
+      box-shadow: 0 2px 4px rgba(0
