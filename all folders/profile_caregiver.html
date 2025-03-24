@@ -6,6 +6,7 @@
   <title>Eldora - Profile Page</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+
   
 </head>
 <body class="bg-gray-100">
@@ -13,11 +14,13 @@
   <header class="bg-indigo-600 text-white py-6 flex justify-center items-center relative">
     <h1 class="text-4xl font-bold">Eldora</h1>
    
+
   </header>
 
   <!-- Form Container -->
   <div id="form-container" class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 my-8">
     <form id="profile-form" class="space-y-8">
+
       <!-- Patient Details -->
       <section id="patient-details">
         <h2 class="text-2xl font-semibold text-indigo-600 border-b pb-2 mb-4">Patient Details</h2>
@@ -68,7 +71,9 @@
           </div>
           <div class="flex flex-col">
             <label for="caregiver-mobile" class="text-gray-700 font-medium">Mobile Number:</label>
+
             <input type="tel" id="caregiver-mobile" name="caregiverMobile" placeholder="Enter caregiver mobile" 
+
               value="+91" maxlength="13"
               pattern="^\+91\d{10}$" 
               title="Enter mobile number in format +91XXXXXXXXXX (10 digits after +91)" 
@@ -157,6 +162,7 @@
       <button id="edit-profile-btn" class="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 focus:outline-none">
         Edit Profile
       </button>
+
       
     </div>
   </div>
@@ -167,6 +173,7 @@
     <a href="settings_elder.html
     " class="text-2xl cursor-pointer transition-transform transform hover:scale-125">⚙️</a>
   </footer>
+
 
   <!-- JavaScript -->
   <script>
@@ -251,8 +258,10 @@
     document.getElementById('profile-form').addEventListener('submit', function(e) {
       e.preventDefault(); // prevent form submission reload
       const summaryData = buildSummary();
+
       // Save caregiver profile to localStorage for elder's page
       localStorage.setItem('caregiverProfile', JSON.stringify(summaryData));
+
       renderSummary(summaryData);
       // Hide form container and show summary container
       document.getElementById('form-container').classList.add('hidden');
@@ -266,6 +275,7 @@
     });
 
   
+
     // Dynamic additional emergency contacts
     document.getElementById('add-contact-btn').addEventListener('click', function() {
       const container = document.getElementById('additional-contacts');
