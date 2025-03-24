@@ -1,0 +1,392 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eldora - Medicine Reminder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-image: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      font-family: 'Inter', sans-serif;
+    }
+    nav {
+      background-image: linear-gradient(to right, #1e3c72, #2a5298);
+    }
+    .nav-btn {
+      background-color: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.5);
+      transition: background-color 0.2s;
+    }
+    .nav-btn.active {
+      background-color: rgba(255,255,255,0.3);
+    }
+    .nav-btn:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    .btn-primary {
+      background-color: #4a90e2;
+      color: white;
+    }
+    .btn-primary:hover {
+      background-color: #3a78c2;
+    }
+    .card {
+      background: #f7f7f7;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="time"] {
+      background-color: #f7f7f7;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+    }
+    .log-entry {
+      padding: 0.75rem;
+      background: white;
+      border-left: 4px solid;
+      margin-bottom: 0.5rem;
+      border-radius: 0.25rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .log-success { border-color: #10b981; }
+    /* New class for missed log entries */
+    .log-danger { border-color: #ef4444; }
+    .nav-btn:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <nav class="p-4">
+    <div class="max-w-4xl mx-auto flex justify-center space-x-4">
+      <button id="caregiverTab" class="nav-btn text-white font-semibold px-4 py-2 rounded active">Caregiver</button>
+      <button id="elderTab" class="nav-btn text-white font-semibold px-4 py-2 rounded">Elder</button>
+    </div>
+  </nav>
+
+  <div class="max-w-4xl mx-auto p-6">
+    <!-- Caregiver View -->
+    <section id="caregiverView" class="mt-6">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 text-center">
+          Eldora - Caregiver Dashboard
+        </h1>
+      </header>
+      
+      <div class="card p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4 border-b pb-2">Set Medicine Reminder</h2>
+        <form id="medicineForm" class="space-y-4">
+          <div>
+            <label for="medicineName" class="block text-gray-600 font-medium">
+              Medicine Name
+            </label>
+            <input type="text" id="medicineName" name="medicineName" placeholder="e.g. Paracetamol" required />
+          </div>
+          <div>
+            <label for="pillCount" class="block text-gray-600 font-medium">
+              Pills per Dose
+            </label>
+            <input type="number" id="pillCount" name="pillCount" placeholder="e.g. 2 pills" min="1" required />
+          </div>
+          <div>
+            <label for="frequency" class="block text-gray-600 font-medium">Frequency (Days)</label>
+            <input type="number" id="frequency" name="frequency" min="1" max="365" value="3" required />
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium">
+              <input type="checkbox" id="lifetime" class="mr-2"> Lifetime Medication
+            </label>
+          </div>
+          <div>
+            <label class="block text-gray-600 font-medium mb-2">Set Alarm Time(s)</label>
+            <div id="timeSlots" class="space-y-2">
+              <div class="flex space-x-2 items-center time-slot">
+                <input type="time" class="startTime rounded-md border-gray-300 shadow-sm" required />
+                <span class="self-center">to</span>
+                <input type="time" class="endTime rounded-md border-gray-300 shadow-sm" required />
+                <button type="button" class="removeTimeSlot bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Remove</button>
+              </div>
+            </div>
+            <button type="button" id="addTimeSlot" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Add Time Slot
+            </button>
+          </div>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+            Set Reminder
+          </button>
+        </form>
+      </div>
+
+      <div class="card bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Active Medicine Reminders</h2>
+        <!-- Only basic reminder details -->
+        <div id="caregiverReminders">
+          <p class="text-gray-500">No reminders set yet.</p>
+        </div>
+      </div>
+
+      <div class="card bg-white p-6 rounded-lg shadow-md mt-8">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Activity Log (Taken/Missed Medications)</h2>
+        <div id="activityLog" class="space-y-2 max-h-96 overflow-y-auto">
+          <p class="text-gray-500 text-sm">No activities yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Elder View -->
+    <section id="elderView" class="mt-6 hidden">
+      <header class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 text-center">
+          Eldora - Elder Dashboard
+        </h1>
+      </header>
+      
+      <div class="card bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">Your Medicine Reminders</h2>
+        <!-- Display only reminder details with a Mark as Taken button for active or missed slots -->
+        <div id="elderReminders">
+          <p class="text-gray-500">No reminders available at the moment.</p>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer class="w-full p-4 bg-white shadow-lg flex justify-around fixed bottom-0">
+    <a href="home_page_elder.html" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">🏠</a>
+    <a href="profile_elder.html" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">👤</a>
+    <a href="settings_elder.html
+    " class="text-2xl cursor-pointer transition-transform transform hover:scale-125">⚙️</a>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      let reminders = [];
+      let logEntries = [];
+
+      const caregiverForm = document.getElementById('medicineForm');
+      const frequencyInput = document.getElementById('frequency');
+      const lifetimeCheckbox = document.getElementById('lifetime');
+
+      function timeToMinutes(timeStr) {
+        const [h, m] = timeStr.split(':').map(Number);
+        return h * 60 + m;
+      }
+
+      function formatDelay(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const remaining = minutes % 60;
+        let parts = [];
+        if (hours > 0) parts.push(`${hours} hour${hours === 1 ? '' : 's'}`);
+        if (remaining > 0) parts.push(`${remaining} minute${remaining === 1 ? '' : 's'}`);
+        return parts.join(' ') + ' late';
+      }
+
+      function addLogEntry(message) {
+        const timestamp = new Date().toLocaleString();
+        logEntries.unshift({ timestamp, message });
+        updateActivityLog();
+      }
+
+      function updateActivityLog() {
+        const logContainer = document.getElementById('activityLog');
+        if (logEntries.length === 0) {
+          logContainer.innerHTML = '<p class="text-gray-500 text-sm">No activities yet.</p>';
+        } else {
+          logContainer.innerHTML = logEntries.map(entry => {
+            // If the entry message contains "missed", use log-danger; otherwise, log-success.
+            const logClass = entry.message.toLowerCase().includes("missed") ? "log-danger" : "log-success";
+            return `
+              <div class="log-entry ${logClass}">
+                <div class="flex justify-between text-sm">
+                  <span class="font-medium">${entry.message}</span>
+                  <span class="text-gray-500 text-xs">${entry.timestamp}</span>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Tab Switching
+      const caregiverTab = document.getElementById('caregiverTab');
+      const elderTab = document.getElementById('elderTab');
+      const caregiverView = document.getElementById('caregiverView');
+      const elderView = document.getElementById('elderView');
+
+      caregiverTab.addEventListener('click', () => {
+        caregiverView.classList.remove('hidden');
+        elderView.classList.add('hidden');
+        caregiverTab.classList.add('bg-blue-700');
+        elderTab.classList.remove('bg-blue-700');
+      });
+      elderTab.addEventListener('click', () => {
+        elderView.classList.remove('hidden');
+        caregiverView.classList.add('hidden');
+        elderTab.classList.add('bg-blue-700');
+        caregiverTab.classList.remove('bg-blue-700');
+      });
+
+      lifetimeCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+          frequencyInput.value = "Life";
+          frequencyInput.disabled = true;
+        } else {
+          frequencyInput.value = 3;
+          frequencyInput.disabled = false;
+        }
+      });
+
+      // Dynamic Time Slot Addition
+      const timeSlotsDiv = document.getElementById('timeSlots');
+      document.getElementById('addTimeSlot').addEventListener('click', () => {
+        const timeSlotDiv = document.createElement('div');
+        timeSlotDiv.classList.add('flex', 'space-x-2', 'items-center', 'time-slot');
+        timeSlotDiv.innerHTML = `
+          <input type="time" class="startTime rounded-md border-gray-300 shadow-sm" required />
+          <span class="self-center">to</span>
+          <input type="time" class="endTime rounded-md border-gray-300 shadow-sm" required />
+          <button type="button" class="removeTimeSlot bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Remove</button>
+        `;
+        timeSlotDiv.querySelector('.removeTimeSlot').addEventListener('click', () => timeSlotDiv.remove());
+        timeSlotsDiv.appendChild(timeSlotDiv);
+      });
+
+      caregiverForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const medicineName = document.getElementById('medicineName').value;
+        const pillCount = document.getElementById('pillCount').value;
+        const frequency = lifetimeCheckbox.checked ? "Life" : frequencyInput.value;
+        
+        const timeSlots = Array.from(document.querySelectorAll('.time-slot')).map(slot => {
+          const start = slot.querySelector('.startTime').value;
+          const end = slot.querySelector('.endTime').value;
+          if (!start || !end) {
+            alert("Please fill in all time slot fields.");
+            return;
+          }
+          const startM = timeToMinutes(start);
+          const endM = timeToMinutes(end);
+          const duration = endM - startM;
+          if (duration <= 0) {
+            alert("End time must be after start time.");
+            return;
+          }
+          const interval = duration / 3;
+          const alarmTimes = [
+            Math.floor(startM + interval),
+            Math.floor(startM + 2 * interval),
+            Math.floor(startM + 3 * interval) // equals endM.
+          ];
+          return {
+            start,
+            end,
+            status: "pending",
+            alarmTimes,
+            alarmsTriggered: [false, false, false]
+          };
+        }).filter(x => x !== undefined);
+        
+        reminders.push({
+          id: Date.now(),
+          medicineName,
+          pillCount,
+          frequency,
+          timeSlots
+        });
+        updateViews();
+        caregiverForm.reset();
+        frequencyInput.disabled = false;
+        lifetimeCheckbox.checked = false;
+        timeSlotsDiv.innerHTML = `<div class="flex space-x-2 items-center time-slot">
+          <input type="time" class="startTime rounded-md border-gray-300 shadow-sm" required />
+          <span class="self-center">to</span>
+          <input type="time" class="endTime rounded-md border-gray-300 shadow-sm" required />
+          <button type="button" class="removeTimeSlot bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600">Remove</button>
+        </div>`;
+      });
+
+      // Alarm Check every second
+      setInterval(() => {
+        const now = new Date();
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+        
+        reminders.forEach(reminder => {
+          reminder.timeSlots.forEach(slot => {
+            const slotStart = timeToMinutes(slot.start);
+            const slotEnd = timeToMinutes(slot.end);
+            if (currentMinutes >= slotStart && currentMinutes < slotEnd) {
+              slot.alarmTimes.forEach((alarmTime, index) => {
+                if (!slot.alarmsTriggered[index] && currentMinutes >= alarmTime) {
+                  alert(`Reminder for Elder: Time to take ${reminder.medicineName} (${slot.start} - ${slot.end}) [Alarm ${index+1}]`);
+                  slot.alarmsTriggered[index] = true;
+                }
+              });
+            }
+            if (currentMinutes >= slotEnd && slot.status === "pending") {
+              slot.status = "missed";
+              alert(`Alert for Caregiver: Medicine "${reminder.medicineName}" missed for time slot ${slot.start} - ${slot.end}`);
+              addLogEntry(`Medicine "${reminder.medicineName}" missed for time slot ${slot.start} - ${slot.end}`);
+            }
+          });
+        });
+        updateViews();
+      }, 1000);
+
+      function updateViews() {
+        const caregiverHTML = reminders.map(reminder => `
+          <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">${reminder.medicineName}</h1>
+            <p class="text-gray-600">Pills per Dose: ${reminder.pillCount}</p>
+            <p class="text-gray-600">Frequency: ${reminder.frequency === "Life" ? "Lifetime" : reminder.frequency + " day(s)"}</p>
+          </div>
+        `).join('') || '<p class="text-gray-500">No reminders set yet.</p>';
+        document.getElementById('caregiverReminders').innerHTML = caregiverHTML;
+        
+        const elderHTML = reminders.map(reminder => `
+          <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">${reminder.medicineName}</h1>
+            <p class="text-gray-600">Pills per Dose: ${reminder.pillCount}</p>
+            ${reminder.timeSlots.map((slot, idx) => `
+              <div class="mt-2">
+                <p class="text-gray-600">${slot.start} - ${slot.end}</p>
+                ${ (slot.status === 'pending' || slot.status === 'missed') ? `
+                  <button onclick="markTaken(${reminder.id}, ${idx})" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+                    Mark as Taken
+                  </button>
+                ` : '' }
+              </div>
+            `).join('')}
+          </div>
+        `).join('') || '<p class="text-gray-500">No reminders available.</p>';
+        document.getElementById('elderReminders').innerHTML = elderHTML;
+        updateActivityLog();
+      }
+
+      function markTaken(reminderId, slotIndex) {
+        console.log(`Marking reminder ${reminderId}, slot ${slotIndex} as taken.`);
+        reminders = reminders.map(reminder => {
+          if (reminder.id === reminderId) {
+            const slot = reminder.timeSlots[slotIndex];
+            if (slot.status === "pending" || slot.status === "missed") {
+              const now = new Date();
+              const currentMinutes = now.getHours() * 60 + now.getMinutes();
+              const slotEnd = timeToMinutes(slot.end);
+              const delay = currentMinutes - slotEnd;
+              slot.status = delay > 0 
+                ? `Taken (${formatDelay(delay)})`
+                : 'Taken on time';
+              addLogEntry(`Medicine "${reminder.medicineName}" taken ${delay > 0 ? formatDelay(delay) : 'on time'} at ${now.toLocaleTimeString()}`);
+            }
+          }
+          return reminder;
+        });
+        updateViews();
+      }
+      window.markTaken = markTaken;
+    });
+  </script>
+</body>
+</html>

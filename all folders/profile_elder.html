@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eldora - Elder Profile</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+</head>
+<body class="bg-gray-100">
+  <!-- Header -->
+  <header class="bg-indigo-600 text-white py-6 flex justify-center items-center relative">
+    <h1 class="text-4xl font-bold text-center">Eldora</h1>
+   
+  </header>
+
+  <!-- Elder's Profile Display Container -->
+  <div class="max-w-4xl mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 shadow-xl rounded-lg p-10 my-8">
+    <h2 class="text-2xl font-bold text-indigo-700 border-b pb-2 mb-6">Caregiver Profile (Read-Only)</h2>
+    <div id="profile-display" class="space-y-4 text-gray-800 text-lg leading-relaxed">
+      <!-- Profile data will be loaded here -->
+    </div>
+  </div>
+  <!-- Footer -->
+  <footer class="w-full p-4 bg-white shadow-lg flex justify-around fixed bottom-0">
+    <a href="home_page_elder.html" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">🏠</a>
+    <a href="profile_elder.html" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">👤</a>
+    <a href="settings_elder.html" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">⚙️</a>
+  </footer>
+
+  <script>
+    // Function to load caregiver profile from localStorage and render it
+    function loadProfile() {
+      const profileDisplay = document.getElementById('profile-display');
+      const data = JSON.parse(localStorage.getItem('caregiverProfile')) || {};
+      let html = `
+        <p><strong>Patient Name:</strong> ${data.patientName || '-'}</p>
+        <p><strong>Gender:</strong> ${data.patientGender || '-'}</p>
+        <p><strong>Patient Email:</strong> ${data.patientEmail || '-'}</p>
+        <p><strong>Patient Mobile:</strong> ${data.patientMobile || '-'}</p>
+        <p><strong>Date of Birth:</strong> ${data.patientDOB || '-'}</p>
+        <hr class="my-2 border-gray-300" />
+        <p><strong>Caregiver Name:</strong> ${data.caregiverName || '-'}</p>
+        <p><strong>Caregiver Email:</strong> ${data.caregiverEmail || '-'}</p>
+        <p><strong>Caregiver Mobile:</strong> ${data.caregiverMobile || '-'}</p>
+        <hr class="my-2 border-gray-300" />
+        <p><strong>Medical Conditions:</strong> ${data.medicalConditions || '-'}</p>
+        <p><strong>Current Medications:</strong> ${data.currentMedications || '-'}</p>
+        <p><strong>Allergies:</strong> ${data.allergies || '-'}</p>
+        <p><strong>Blood Group:</strong> ${data.bloodGroup || '-'}</p>
+        <p><strong>Doctor's Contact:</strong> ${data.doctorContact || '-'}</p>
+        <hr class="my-2 border-gray-300" />
+        <p><strong>Physical Address:</strong> ${data.physicalAddress || '-'}</p>
+        <p><strong>Emergency Contact:</strong> ${data.emergencyContactName || '-'} (${data.emergencyContactPhone || '-'})</p>
+      `;
+      if(data.additionalEmergencyContacts && data.additionalEmergencyContacts.length > 0) {
+        html += `<p class="mt-4"><strong>Additional Emergency Contacts:</strong></p>`;
+        data.additionalEmergencyContacts.forEach((contact, index) => {
+          html += `<p>${index+1}. ${contact.name} - ${contact.phone}</p>`;
+        });
+      }
+      profileDisplay.innerHTML = html;
+    }
+
+    // Load profile on page load
+    loadProfile();
+
+    // Listen for changes in localStorage (from caregiver page) and update automatically
+    window.addEventListener("storage", function(e) {
+      if (e.key === "caregiverProfile") {
+        loadProfile();
+      }
+    });
+  </script>
+</body>
+</html>
