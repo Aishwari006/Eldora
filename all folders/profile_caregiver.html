@@ -6,32 +6,21 @@
   <title>Eldora - Profile Page</title>
   <!-- Tailwind CSS via CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Additional custom styles */
-    .switch-link {
-      background: linear-gradient(90deg, #667eea, #764ba2);
-      padding: 8px 16px;
-      border-radius: 9999px;
-      transition: background 0.3s;
-    }
-    .switch-link:hover {
-      background: linear-gradient(90deg, #5a67d8, #6b46c1);
-    }
-  </style>
+
+  
 </head>
 <body class="bg-gray-100">
-  <!-- Header with Switch Profile Link -->
+  <!-- Header  -->
   <header class="bg-indigo-600 text-white py-6 flex justify-center items-center relative">
     <h1 class="text-4xl font-bold">Eldora</h1>
-    <a href="#" id="switch-profile" class="switch-link absolute right-4 top-1/2 transform -translate-y-1/2 text-white font-semibold">
-      Switch Profile
-    </a>
+   
+
   </header>
 
   <!-- Form Container -->
   <div id="form-container" class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-8 my-8">
     <form id="profile-form" class="space-y-8">
-      
+
       <!-- Patient Details -->
       <section id="patient-details">
         <h2 class="text-2xl font-semibold text-indigo-600 border-b pb-2 mb-4">Patient Details</h2>
@@ -82,7 +71,9 @@
           </div>
           <div class="flex flex-col">
             <label for="caregiver-mobile" class="text-gray-700 font-medium">Mobile Number:</label>
-            <input type="tel" id="caregiver-mobile" name="caregiverMobile" placeholder="Enter mobile number" 
+
+            <input type="tel" id="caregiver-mobile" name="caregiverMobile" placeholder="Enter caregiver mobile" 
+
               value="+91" maxlength="13"
               pattern="^\+91\d{10}$" 
               title="Enter mobile number in format +91XXXXXXXXXX (10 digits after +91)" 
@@ -171,11 +162,18 @@
       <button id="edit-profile-btn" class="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 focus:outline-none">
         Edit Profile
       </button>
-      <a href="#" id="switch-profile-summary" class="switch-link text-white font-semibold">
-        Switch Profile
-      </a>
+
+      
     </div>
   </div>
+  <!-- Footer -->
+  <footer class="w-full p-4 bg-white shadow-lg flex justify-around fixed bottom-0">
+    <a href="home_page.html" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">🏠</a>
+    <a href="profile_caregiver.html" class="text-2xl cursor-pointer transition-transform transform hover:scale-125">👤</a>
+    <a href="settings_elder.html
+    " class="text-2xl cursor-pointer transition-transform transform hover:scale-125">⚙️</a>
+  </footer>
+
 
   <!-- JavaScript -->
   <script>
@@ -260,6 +258,10 @@
     document.getElementById('profile-form').addEventListener('submit', function(e) {
       e.preventDefault(); // prevent form submission reload
       const summaryData = buildSummary();
+
+      // Save caregiver profile to localStorage for elder's page
+      localStorage.setItem('caregiverProfile', JSON.stringify(summaryData));
+
       renderSummary(summaryData);
       // Hide form container and show summary container
       document.getElementById('form-container').classList.add('hidden');
@@ -272,16 +274,8 @@
       document.getElementById('form-container').classList.remove('hidden');
     });
 
-    // "Switch Profile" links (placeholder functionality)
-    document.getElementById('switch-profile').addEventListener('click', function(e) {
-      e.preventDefault();
-      alert('Switch Profile clicked! (Add your functionality here)');
-    });
-    document.getElementById('switch-profile-summary').addEventListener('click', function(e) {
-      e.preventDefault();
-      alert('Switch Profile clicked! (Add your functionality here)');
-    });
-    
+  
+
     // Dynamic additional emergency contacts
     document.getElementById('add-contact-btn').addEventListener('click', function() {
       const container = document.getElementById('additional-contacts');
@@ -321,3 +315,4 @@
   </script>
 </body>
 </html>
+
